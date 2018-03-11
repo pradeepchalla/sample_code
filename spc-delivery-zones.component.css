@@ -1,0 +1,94 @@
+
+.table>tbody>tr>td{
+    border-top: none;
+}
+.bodertop_bottom{
+    border-top: 2px solid #ddd;
+    border-bottom: 2px solid #ddd;
+}
+.borderless td, .borderless th {
+    border: none;
+    padding:1px;
+    
+}
+.table>tbody+tbody {
+    border-top: none;
+    
+}
+.table>.addbutton td{
+vertical-align: middle;
+}
+.inpu_g_settings{
+    width:60px;
+}
+.disabled {
+   pointer-events: none;
+   cursor: default;
+   color: white;
+   background: #D3D3D3!important;
+}
+.enabled{
+   pointer-events: initial;
+   cursor: pointer;
+   
+   background: orange
+
+}
+
+
+.borderforinput{
+border:2px solid #F2F2F2
+}
+.md-button {
+    min-width: 1%;
+}
+select{
+  height: 26px;
+}
+.inpu_g_settings_liefer{
+  width:30px;
+}
+.inpu_g_settings_liefer_enter{
+  width:40px;
+
+}
+.btn-fsblue{
+      color: white;
+    background-color: #396596;
+    border-color: white;
+}
+.active123{
+  color:orange;
+}
+
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+.snackbar123 {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 10000; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    top: 30%; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+.snackbar123.show {
+    visibility: visible; /* Show the snackbar */
+
+/* Add animation: Take 0.5 seconds to fade in and out the snackbar. 
+However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 1s, fadeout 1s 5s;
+    animation: fadein 2s, fadeout 2s 5s;
+}
+
+
+
+
+

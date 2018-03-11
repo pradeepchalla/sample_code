@@ -1,0 +1,142 @@
+<div>
+  <h1 style="text-align:center;">
+
+
+
+  Lieferzonen Verkaufsbüro {{sellinpointname}}</h1>
+<div [ngBusy]="busy"></div>
+<div class="row">
+  <div class="col-md-3">
+      <table class="table borderless">  
+          <tbody>
+              <ng-template let-key ngFor [ngForOf]="finaldeliveryzone | keys" let-l="last" let-f="first">
+                  <tr>
+                      <td>Zone {{finaldeliveryzone[key].zoneinfo.number}}:</td>
+                      <td>
+                          <span class="glyphicon glyphicon-map-marker" [style.color]="finaldeliveryzone[key].zoneinfo.color" aria-hidden="true"></span>
+                          <input class="inpu_g_settings_liefer" [ngModel]="finaldeliveryzone[key].zoneinfo.from" disabled/>bis
+                          <input OnlyNumberwithoutdot="true" class="inpu_g_settings_liefer_enter" [ngModel]="finaldeliveryzone[key].zoneinfo.to" [disabled]="!l"
+                              (keyup)="zonetovalue($event.target.value,sellingpoint_id,key,finaldeliveryzone[key].zoneinfo.from)"
+                          /> Km</td>
+                      <td><span *ngIf="l && !f" class="glyphicon glyphicon-trash" style="color:red;font-size: 20px;cursor:pointer"
+                              (click)="deletezones(sellingpoint_id,finaldeliveryzone[key].zoneinfo.number)" aria-hidden="true"></span></td>
+                  </tr>
+                  <tr *ngIf="lessvalue && l">
+                      <td></td>
+                      <td style="color:red;">Wert zu gering!</td>
+                  </tr>
+                  <tr *ngIf="l">
+                      <td><button md-mini-fab [ngClass]="{disabled: finaldeliveryzone[key].zoneinfo.number>=10}"  appBackgroundcolor appActiveAhover="true" (click)="addingzones(finaldeliveryzone,sellingpoint_id)"><md-icon >add</md-icon></button></td>
+                      <td style="padding-top: 20px;">Lieferzone hinzufügen</td>
+                  </tr>
+              </ng-template>
+
+          </tbody>
+      </table>
+      <button [ngClass]="submitbutton ? 'enabled' : 'disabled'" appBackgroundcolor appActiveAhover="true" style="width:100%;" (click)="plzcalculationforzones(finaldeliveryzone,sellingpoint_id)"
+          md-raised-button>Lieferzonen berechnen</button>
+  </div>
+  <div class="col-md-9" style=" border-left: 1px dashed #333;">
+
+
+
+
+      <ul class="nav nav-tabs">
+          <li [ngClass]="{active: 'mapview'===clickedview}" (click)="view('mapview')" style="cursor:pointer"><a data-toggle="tab">Map</a></li>
+          <li [ngClass]="{active: 'tableview'===clickedview}" (click)="view('tableview')" style="cursor:pointer"><a data-toggle="tab">PLZ Tabelle</a></li>
+
+      </ul>
+
+
+
+
+
+      <div *ngIf="clickedview==='mapview'" leaflet style="height:500px;overflow:hidden;margin-top:2px" class="firstmap" [leafletOptions]="options"
+          [leafletLayers]="layers" [leafletFitBounds]="fitBounds" [leafletMarkerCluster]="markerClusterData" (leafletMapReady)="onMapReady($event)"></div>
+
+
+
+
+      <div *ngIf="clickedview==='tableview'" style="min-height:500px;max-height:500px;overflow: auto;">
+
+          <div class="col-md-12" style="margin-top:2px">
+              <div class="btn-group btn-group-justified">
+                  <div class="btn-group" *ngFor="let key of finaldeliveryzone | keys" type="button">
+                      <button class="btn btn-fsblue" [ngClass]="{active123: key===zonekey}" (click)="tablezones(key)">{{key}}</button>
+                  </div>
+              </div>
+          </div>
+
+          <div style="float:right;margin-right: 17px;"><b>Sortierung:<select (change)="sortingorder($event.target.value)">
+              <option   *ngFor="let ch of orders" [ngValue]="ch" [selected]="ch.name =='traveldistance' ? true: null">{{ch.value}}</option>
+        </select></b>
+          </div>
+
+          <ng-template let-key ngFor [ngForOf]="finaldeliveryzone | keys">
+
+
+              <table class="borderless col-md-3">
+                  <tr>
+                      <td style="min-width:250px;max-width:300px">
+                          <md-list *ngIf="key==zonekey">
+                              <md-list-item *ngFor="let ch of finaldeliveryzone[key].plz | sort:order | slice:0:ceilevent((finaldeliveryzone[key].plz.length)/3)">
+                                  <md-icon md-list-icon>
+                                      <md-checkbox [checked]="!(this.finaldeliveryzone[key]['zoneinfo']['disabled']).includes(ch._id)" (change)="disabledornot(key,ch._id,!(this.finaldeliveryzone[key]['zoneinfo']['disabled']).includes(ch._id),sellingpoint_id)"></md-checkbox>
+                                  </md-icon>
+                                  <p md-line> <span>{{ch.traveldistance}}</span> KM </p>
+                                  <h4 md-line title="{{ch.place_name}}">{{ch.country_code}}, {{ch.place_name}}</h4>
+                                  <p md-line title="{{ch.suburb}}"> {{ch.suburb}} </p>
+                              </md-list-item>
+                          </md-list>
+
+                      </td>
+
+                      <td style="min-width:250px;max-width:300px">
+                          <md-list *ngIf="key==zonekey">
+                              <md-list-item *ngFor="let ch of finaldeliveryzone[key].plz  | sort:order | slice:ceilevent((finaldeliveryzone[key].plz.length)/3):ceilevent((finaldeliveryzone[key].plz.length*2)/3)">
+                                  <md-icon md-list-icon>
+                                      <md-checkbox [checked]="!(this.finaldeliveryzone[key]['zoneinfo']['disabled']).includes(ch._id)" (change)="disabledornot(key,ch._id,!(this.finaldeliveryzone[key]['zoneinfo']['disabled']).includes(ch._id),sellingpoint_id)"></md-checkbox>
+                                  </md-icon>
+                                  <p md-line> <span>{{ch.traveldistance}}</span> KM </p>
+                                  <h4 md-line title="{{ch.place_name}}">{{ch.country_code}}, {{ch.place_name}}</h4>
+                                  <p md-line title="{{ch.suburb}}"> {{ch.suburb}} </p>
+                              </md-list-item>
+                          </md-list>
+
+                      </td>
+
+
+
+
+                      <td style="min-width:250px;max-width:300px">
+                          <md-list *ngIf="key==zonekey">
+                              <md-list-item *ngFor="let ch of finaldeliveryzone[key].plz | sort:order | slice:ceilevent((finaldeliveryzone[key].plz.length*2)/3):(finaldeliveryzone[key].plz.length)">
+                                  <md-icon md-list-icon>
+                                      <md-checkbox [checked]="!(this.finaldeliveryzone[key]['zoneinfo']['disabled']).includes(ch._id)" (change)="disabledornot(key,ch._id,!(this.finaldeliveryzone[key]['zoneinfo']['disabled']).includes(ch._id),sellingpoint_id)"></md-checkbox>
+                                  </md-icon>
+                                  <p md-line> <span>{{ch.traveldistance}}</span> KM </p>
+                                  <h4 md-line title="{{ch.place_name}}">{{ch.country_code}}, {{ch.place_name}}</h4>
+                                  <p md-line title="{{ch.suburb}}"> {{ch.suburb}} </p>
+                              </md-list-item>
+                          </md-list>
+                      </td>
+                  </tr>
+
+              </table>
+          </ng-template>
+
+      </div>
+  </div>
+
+</div>
+<br>
+<button md-raised-button md-dialog-close (click)="deletetempdata(sellingpoint_id)" style="float:left"appBackgroundcolor appActiveAhover="true"
+ >Abbrechen</button>
+<button  md-raised-button md-dialog-close [ngClass]="afterlieferclick ? 'enabled' : 'disabled'"
+  (click)="submitlieferzonen(sellingpoint_id)" style="float:right;"appBackgroundcolor appActiveAhover="true">Bestätigen</button>
+
+
+  <div [ngClass]="{snackbar123:true,show:viewsnack123}">Vielen Dank für Ihre Mitteilung!</div>
+  
+  
+</div>
